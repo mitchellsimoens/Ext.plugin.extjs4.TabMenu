@@ -9,34 +9,46 @@ Ext.onReady(function() {
         },
         plugins  : {
             ptype : 'tabmenu',
-            menu  : [
-                {
-                    text    : 'Close Tab',
-                    handler : function() {
-                        var tab = tabpanel.activeTab;
-                        tabpanel.remove(tab);
+            menu  : {
+                items : [
+                    {
+                        text    : 'Close Tab',
+                        handler : function() {
+                            var tab = tabpanel.activeTab;
+                            tabpanel.remove(tab);
+                        }
+                    },
+                    '-',
+                    {
+                        text    : 'Close Other Tabs',
+                        handler : function() {
+                            var items = tabpanel.items,
+                                tab   = tabpanel.activeTab;
+                            items.each(function(item) {
+                                if (item.id !== tab.id) {
+                                    tabpanel.remove(item);
+                                }
+                            });
+                        }
+                    },
+                    {
+                        text    : 'Close All',
+                        handler : function() {
+                            tabpanel.removeAll();
+                        }
                     }
-                },
-                '-',
-                {
-                    text    : 'Close Other Tabs',
-                    handler : function() {
-                        var items = tabpanel.items,
-                            tab   = tabpanel.activeTab;
-                        items.each(function(item) {
-                            if (item.id !== tab.id) {
-                                tabpanel.remove(item);
-                            }
-                        });
-                    }
-                },
-                {
-                    text    : 'Close All',
-                    handler : function() {
-                        tabpanel.removeAll();
+                ],
+                listeners : {
+                    show : function(menu) {
+                        var items     = tabpanel.items,
+                            numItems  = items.getCount(),
+                            menuItems = menu.query('menuitem'),
+                            action    = numItems > 1 ? 'enable' : 'disable';
+
+                        menuItems[2][action]();
                     }
                 }
-            ]
+            }
         },
         items    : [
             {
