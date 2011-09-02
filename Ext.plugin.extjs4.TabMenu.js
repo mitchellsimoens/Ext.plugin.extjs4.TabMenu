@@ -8,6 +8,13 @@ Ext.define('Ext.plugin.extjs4.TabMenu', {
         tabpanel.on('afterrender', me.addTabListener, me, { single : true });
     },
 
+    destroy: function() {
+        var me = this;
+
+        me.menu.destroy();
+        delete me.menu;
+    },
+
     addTabListener: function(tabpanel) {
         var me  = this,
             bar = tabpanel.down('tabbar');
@@ -38,14 +45,18 @@ Ext.define('Ext.plugin.extjs4.TabMenu', {
     getMenu: function() {
         var me = this;
 
-        if (me.tabMenu) {
-            return me.tabMenu;
+        if (me.menu instanceof Ext.menu.Menu) {
+            return me.menu;
         }
 
-        var menu = me.menu || [];
+        var menu = me.menu || {};
 
-        return me.tabMenu = Ext.create('Ext.menu.Menu', {
-            items : menu
-        });
+        if (Ext.isArray(menu)) {
+            menu = {
+                items : menu
+            };
+        }
+
+        return me.menu = Ext.create('Ext.menu.Menu', menu);
     }
 });
